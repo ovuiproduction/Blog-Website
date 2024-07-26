@@ -9,7 +9,7 @@ const database_url = process.env.DATABASE_URL;
 mongoose.connect(database_url);
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 app.set('view engine','ejs');
 app.use(express.static("public"));
