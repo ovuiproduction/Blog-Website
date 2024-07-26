@@ -5,6 +5,7 @@
         width:100%;
         height:70vh;
         overflow-y: scroll;
+        margin-bottom:5vh;
     }
     .blogTitle{
         text-decoration: underline;
@@ -15,6 +16,7 @@
         margin-bottom:2rem;
     }
     .blogDescription{
+        text-align: justify;
         margin-bottom:2rem;
         padding-right:1.5rem;
     }
@@ -23,6 +25,7 @@
         text-align: justify;
     }
     .description-text-header{
+        text-align: justify;
         text-decoration: underline;
         text-decoration-line: 1px solid gray;
         font-size:18px;
@@ -34,13 +37,12 @@
 <div class="blog">
     <h2 class="blogTitle"><%= article.title %></h2>
     <p class="blogDate"><%= article.createdAt.toLocaleDateString() %></p>
-    <p class="blogDescription"><span class="description-text-header">Description</span><br><%= article.description %></p>
+    <p   class="blogDescription"><span class="description-text-header">Description</span><br><%= article.description %></p>
     <div class="blogContent">
     <% formattedBlogContent.forEach((paragraph) =>{ %>
-        <p><span class="description-text-header">Content</span><br><%= paragraph %></p>
+        <p ><span class="description-text-header">Content</span><br><%= paragraph %></p>
     <% }) %>
     </div>
-   
 </div>
 
 
