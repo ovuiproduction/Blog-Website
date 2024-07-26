@@ -1,4 +1,4 @@
-<%-include("partials/header") %>
+<!-- <%-include("partials/header") %>
 
   <h1>Blogs</h1>
   <a  href="/article/new">New</a>
@@ -27,16 +27,76 @@
         </div>
     <% }) %>
   </div>
+  
+<%-include("partials/footer") %> -->
 
-  <script>
-    document.getElementById('deleteForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting immediately
-        
-        if (confirm('Are you sure you want to delete this article?')) {
-            // If the user confirms, submit the form
-            event.target.submit();
-        }
-    });
-</script>
+<%-include("partials/header") %>
+
+<h1>Blogs</h1>
+<a href="/article/new">New</a>
+
+<div class="blogs">
+  <% articles.forEach((article) => { %>
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title"><%= article.title %></h3>
+      <p class="card-text blogdate">
+        <%= article.createdAt.toLocaleDateString() %>
+      </p>
+      <div class="card-text">
+        <p class="card-description">
+          <%= article.description.substr(0,100) %>
+          <span>
+            <a href="/article/read/<%= article._id %>" class="read-more-text"
+              >...read more</a
+            >
+          </span>
+        </p>
+      </div>
+      <div class="controlbtn">
+        <form
+          id="deleteForm-<%= article._id %>"
+          action="/article/drop/<%= article._id %>"
+          method="post"
+        >
+          <button type="submit" class="btn btn-secondary">Delete</button>
+        </form>
+        <a href="/article/read/<%= article._id %>" class="btn btn-success"
+          >Read</a
+        >
+        <a
+          href="/article/edit/<%= article._id %>"
+          class="btn btn-secondary btn-edit"
+          >Edit</a
+        >
+      </div>
+    </div>
+  </div>
+  <% }) %>
+</div>
 
 <%-include("partials/footer") %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const deleteForms = document.querySelectorAll('form[id^="deleteForm-"]');
+
+    deleteForms.forEach((form) => {
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        let password = prompt("Please enter your password to confirm deletion");
+        let date = new Date();
+        let dd = String(date.getDate()).padStart(2, "0");
+        let mm = String(date.getMonth() + 1).padStart(2, "0"); // January is 0, so add 1
+        let yy = date.getFullYear();
+        let currPassword = dd + mm + yy;
+        console.log(currPassword);
+        if (password === currPassword) {
+          event.target.submit();
+        } else {
+          alert("Incorrect password. Form will not be submitted.");
+        }
+      });
+    });
+  });
+</script>
