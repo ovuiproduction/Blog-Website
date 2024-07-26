@@ -6,10 +6,16 @@ const Article = require('./models/article');
 require('dotenv').config();
 
 const database_url = process.env.DATABASE_URL;
-mongoose.connect(database_url);
+const port = process.env.PORT || 3000;
+
+mongoose.connect(database_url, {
+    ssl: true
+  })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
+
 
 const app = express();
-const port = process.env.PORT || 3000;
 
 app.set('view engine','ejs');
 app.use(express.static("public"));
