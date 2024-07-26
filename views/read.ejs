@@ -1,0 +1,49 @@
+<%-include("partials/header") %>
+
+<style>
+    .blog{
+        width:100%;
+        height:70vh;
+        overflow-y: scroll;
+    }
+    .blogTitle{
+        text-decoration: underline;
+        margin-bottom:2rem;
+    }
+    .blogDate{
+        color: gray;
+        margin-bottom:2rem;
+    }
+    .blogDescription{
+        margin-bottom:2rem;
+        padding-right:1.5rem;
+    }
+    .blogContent{
+        padding-right:1.5rem;
+        text-align: justify;
+    }
+    .description-text-header{
+        text-decoration: underline;
+        text-decoration-line: 1px solid gray;
+        font-size:18px;
+        font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        color: gray;
+    }
+</style>
+
+<div class="blog">
+    <h2 class="blogTitle"><%= article.title %></h2>
+    <p class="blogDate"><%= article.createdAt.toLocaleDateString() %></p>
+    <p class="blogDescription"><span class="description-text-header">Description</span><br><%= article.description %></p>
+    <div class="blogContent">
+    <% formattedBlogContent.forEach((paragraph) =>{ %>
+        <p><span class="description-text-header">Content</span><br><%= paragraph %></p>
+    <% }) %>
+    </div>
+   
+</div>
+
+
+
+
+<%-include("partials/footer") %>
