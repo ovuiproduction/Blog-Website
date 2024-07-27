@@ -1,0 +1,113 @@
+
+<%-include("partials/header") %>
+<h1 class="user-name-text">Welcome <%= user.name %></h1>
+<h2 class="user-my-blog-header">My Blogs</h2>
+<a class="new-blog-text" href="/article/new">New</a>
+<div class="blogs">
+  <% articles.forEach((article) => { %>
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title"><%= article.title %></h3>
+      <p class="card-text blogdate">
+        <%= article.createdAt.toLocaleDateString() %>
+      </p>
+      <div class="card-text">
+        <p class="card-description">
+          <%= article.description.substr(0,100) %>
+          <span>
+            <a href="/article/read/<%= article._id %>" class="read-more-text"
+              >...read more</a
+            >
+          </span>
+        </p>
+      </div>
+      <div class="controlbtn">
+        <div>
+        <form
+          id="deleteForm-<%= article._id %>"
+          action="/article/drop/<%= article._id %>"
+          method="post"
+        >
+          <button type="submit" class="btn btn-secondary delete-btn">Delete</button>
+        </form>
+      </div>
+      <div>
+        <a
+          href="/article/edit/<%= article._id %>"
+          class="btn btn-secondary btn-edit"
+          >Edit</a
+        >
+       
+      </div>
+        <div>
+        <a
+          href="/publish/article/<%= article.title.replace(/\s+/g, '-') %>/<%= article._id %>"
+          class="btn btn-primary"
+          >Publish</a
+        >
+      </div>
+        <div>
+          <a href="/article/read/<%= article._id %>" class="btn btn-success"
+            >Read</a
+          >
+      </div>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+</div>
+<div class="request-main-block">
+  <h2 class="request-block-header">Publish Requests</h2>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Sr.no</th>
+          <th scope="col">Blog Name</th>
+          <th scope="col">Date of request</th>
+          <th scope="col">Status</th>
+          <th scope="col">Date of acceptance</th>
+          <th scope="col">Remark</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% requests.forEach((request, index) => { %>
+          <tr>
+              <th scope="row"><%= index + 1 %></th>
+              <td><%= request.blogName.replace('-',' ') %></td>
+              <td><%= request.dateOfRequest %></td>
+              <td><%= request.status %></td>
+              <td><%= request.dateOfApprove %></td>
+              <td><%= request.remark %></td>
+          </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%-include("partials/footer") %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const deleteForms = document.querySelectorAll('form[id^="deleteForm-"]');
+
+    deleteForms.forEach((form) => {
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        let password = prompt("Please enter your password to confirm deletion");
+        let date = new Date();
+        let dd = String(date.getDate()).padStart(2, "0");
+        let mm = String(date.getMonth() + 1).padStart(2, "0"); // January is 0, so add 1
+        let yy = date.getFullYear();
+        let currPassword = dd + mm + yy;
+        console.log(currPassword);
+        if (password === currPassword) {
+          event.target.submit();
+        } else {
+          alert("Incorrect password. Form will not be submitted.");
+        }
+      });
+    });
+  });
+</script>

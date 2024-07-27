@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>DAILY Blogs</title>
+
+</head>
+<nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <p class="navbar-brand">DAILY Blogs</p>
+    </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li id="home"><a href="/admin-portal">HOME</a></li>
+        <li id="about"><a href="/about">ABOUT US</a></li>
+        <li id="contact"><a href="/contact">CONTACT US</a></li>
+      </ul>
+  </div>
+</nav>
+<body>
+  <div class="admin-content-block">
+    <div class="table-responsive">
+    <table class="request-table table">
+        <thead>
+          <tr>
+            <th scope="col">Sr.no</th>
+            <th scope="col">Blog Name</th>
+            <th scope="col">Date of request</th>
+            <th scope="col">Status</th>
+            <th scope="col">Date of acceptance</th>
+            <th scope="col">Remark</th>
+            <th scope="col">View request</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% requests.forEach((requestDoc, index) => { %>
+            <% requestDoc.requestData.forEach((request, index) => { %>
+            <tr class="admin-portal-table-row">
+                <th scope="row"><%= index + 1 %></th>
+                <td><%= request.blogName.replace('-',' ') %></td>
+                <td><%= request.dateOfRequest %></td>
+                <td><%= request.status %></td>
+                <td><%= request.dateOfApprove %></td>
+                <td><%= request.remark %></td>
+                <td><a class="btn btn-success" href="/publish/view-request/<%= request._id %>">View request</a></td>
+            </tr>
+            <% }) %>
+        <% }) %>
+        </tbody>
+      </table>
+    </div>
+</div>
+<div class="footer-padding"></div>
+  <div class="footer">
+    <p class="footer-text">Made with &heartsuit;</p>
+    <p style="font-size:10px;">Inspired by @angela yu</p>
+  </div>
+</div>
+</body>
+</html>
