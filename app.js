@@ -7,11 +7,10 @@ require('dotenv').config();
 const authRouter = require('./authRoutes/authRouter');
 const articleRouter = require('./articleRoute/routes');
 const publishRouter = require('./articleRoute/publishRouter');
-const RequestColl = require("./models/request");
 
+const RequestColl = require("./models/request");
 const Article = require('./models/article');
 const userArticles = require('./models/userArticles');
-const request = require('./models/request');
 
 const database_url = process.env.DATABASE_URL;
 const port = process.env.PORT || 3000;
@@ -98,9 +97,9 @@ app.use('/publish',publishRouter);
 app.get('/admin-portal',async(req,res)=>{
     try{
         const requests = await RequestColl.find({});
-        res.status(200).render('adminportal',{requests:requests});
+        res.status(200).render('adminPortal',{requests:requests});
     }catch(err){
-        res.status(400).send("Internal Server Error");
+        res.status(400).send(err);
     }
 });
 
