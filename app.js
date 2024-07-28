@@ -7,10 +7,11 @@ require('dotenv').config();
 const authRouter = require('./authRoutes/authRouter');
 const articleRouter = require('./articleRoute/routes');
 const publishRouter = require('./articleRoute/publishRouter');
+const publicArticleRouter = require('./publicArticleRoutes/publicArticleRouter');
+const myAccountRouter = require('./myAccountRoute/myAccountRouter');
 
 const RequestColl = require("./models/request");
 const Article = require('./models/article');
-const userArticles = require('./models/userArticles');
 
 const database_url = process.env.DATABASE_URL;
 const port = process.env.PORT || 3000;
@@ -70,29 +71,12 @@ app.get('/contact',(req,res)=>{
     }
 });
 
-app.get('/my-account',async(req,res)=>{
-    try{
-        const user = req.session.user;
-        let articles = await userArticles.find({authorId:user.username}).sort({createdAt:1}).lean();
-        let requests = await RequestColl.find({authorId:user.username});
-        if(requests.length != 0){
-            requests = requests[0].requestData;
-        }
-        if(articles.length != 0){
-            articles = articles[0].article;
-        }
-        res.render("myAccount",{articles:articles,user:user,requests:requests});
-    }catch(err){
-        console.log(err);
-        res.redirect('/');
-    }
-});
-
 
 app.use('/article',articleRouter);
 app.use('/auth',authRouter);
 app.use('/publish',publishRouter);
-
+app.use('/public-article',publicArticleRouter);
+app.use('/my-account',myAccountRouter);
 
 app.get('/admin-portal',async(req,res)=>{
     try{

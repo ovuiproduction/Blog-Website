@@ -36,7 +36,7 @@ router.get("/article/:blogName/:blogId", async (req, res) => {
 
     await request.save();
 
-    res.redirect("/my-account");
+    res.redirect("/my-account/dashboard");
   } catch (err) {
     console.log(err);
     res.status(400).send("Internal Server Error");

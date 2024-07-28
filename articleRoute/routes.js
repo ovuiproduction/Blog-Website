@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const Article = require("../models/article");
+
 const userArticles = require("../models/userArticles");
-const UserAuth = require("../models/userAuth");
 const RequestColl = require("../models/request");
+const HistoryColl = require("../models/history");
 
 router.get("/new", (req, res) => {
   try {
@@ -44,7 +44,7 @@ router.post("/new", async (req, res) => {
     }
 
     await blog.save();
-    res.redirect("/my-account");
+    res.redirect("/my-account/dashboard");
   } catch (err) {
     console.log(err);
     res.status(500).send("Internal Server Error");
@@ -78,7 +78,7 @@ router.post("/drop/:id", async (req, res) => {
     // Save the updated document
     await userDocument.save();
 
-    if(article.status == "private")
+    if(article.status == "Private")
     {
     let requestDocument = await RequestColl.findOne({
       "requestData.blogId": articleId,
@@ -100,7 +100,7 @@ router.post("/drop/:id", async (req, res) => {
     await requestDocument.save();
 
     }
-    res.redirect("/my-account");
+    res.redirect("/my-account/dashboard");
   } catch (err) {
     console.log(err);
     res.status(500).send("Internal Server Error");
@@ -179,7 +179,7 @@ router.post("/edit/:id", async (req, res) => {
 
     await userDocument.save();
 
-    res.redirect("/my-account");
+    res.redirect("/my-account/dashboard");
   } catch (err) {
     console.log(err);
     res.status(500).send("Internal Server Error");
