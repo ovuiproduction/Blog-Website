@@ -1,63 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/styles.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
     <title>DAILY Blogs</title>
-
-</head>
-<nav class="navbar navbar-default">
-  <div class="container">
-    <div class="navbar-header">
-      <p class="navbar-brand">DAILY Blogs</p>
-    </div>
+  </head>
+  <nav class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        <p class="navbar-brand">DAILY Blogs</p>
+      </div>
       <ul class="nav navbar-nav navbar-right">
-        <li id="home"><a href="/admin-portal">HOME</a></li>
-        <li id="about"><a href="/about">ABOUT US</a></li>
-        <li id="contact"><a href="/contact">CONTACT US</a></li>
+        <li id="home"><a href="/admin-portal/dashboard">HOME</a></li>
+        <li id="about"><a href="/admin-portal/request-list">REQUESTS</a></li>
       </ul>
-  </div>
-</nav>
-<body>
-  <div class="admin-content-block">
-    <div class="table-responsive">
-    <table class="request-table table">
-        <thead>
-          <tr>
-            <th scope="col">Sr.no</th>
-            <th scope="col">Blog Name</th>
-            <th scope="col">Date of request</th>
-            <th scope="col">Status</th>
-            <th scope="col">Date of acceptance</th>
-            <th scope="col">Remark</th>
-            <th scope="col">View request</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% requests.forEach((requestDoc, index) => { %>
-            <% requestDoc.requestData.forEach((request, index) => { %>
-            <tr class="admin-portal-table-row">
-                <th scope="row"><%= index + 1 %></th>
-                <td><%= request.blogName.replace('-',' ') %></td>
-                <td><%= request.dateOfRequest %></td>
-                <td><%= request.status %></td>
-                <td><%= request.dateOfApprove %></td>
-                <td><%= request.remark %></td>
-                <td><a class="btn btn-success" href="/publish/view-request/<%= request._id %>">View request</a></td>
-            </tr>
-            <% }) %>
-        <% }) %>
-        </tbody>
-      </table>
     </div>
-</div>
-<div class="footer-padding"></div>
-  <div class="footer">
-    <p class="footer-text">Made with &heartsuit;</p>
-    <p style="font-size:10px;">Inspired by @angela yu</p>
-  </div>
-</div>
-</body>
+  </nav>
+  <body>
+    <div class="content">
+      <h1>Blogs</h1>
+
+      <div class="blogs">
+        <% articles.forEach((article) => { %>
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title"><%= article.title %></h3>
+            <p class="card-text blogdate">
+              <%= article.createdAt.toLocaleDateString() %>
+            </p>
+            <div class="card-text">
+              <p class="card-description">
+                <%= article.description.substr(0,100) %>
+                <span>
+                  <a
+                    href="/admin-portal/read/<%= article._id %>"
+                    class="read-more-text"
+                    >...read more</a
+                  >
+                </span>
+              </p>
+            </div>
+            <div class="controlbtn">
+              <div>
+                <form
+                  id="deleteForm-<%= article._id %>"
+                  action="/admin-portal/drop/<%= article._id %>"
+                  method="post"
+                >
+                  <button type="submit" class="btn btn-danger delete-btn">
+                    Delete
+                  </button>
+                </form>
+              </div>
+              <div>
+                <a
+                  href="/admin-portal/read/<%= article._id %>"
+                  class="btn btn-success"
+                  >Read</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+    <%-include("partials/footer") %>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const deleteForms = document.querySelectorAll(
+          'form[id^="deleteForm-"]'
+        );
+
+        deleteForms.forEach((form) => {
+          form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            if (confirm("Are you sure to delete ?")) {
+              event.target.submit();
+            }
+          });
+        });
+      });
+    </script>
+  </body>
 </html>

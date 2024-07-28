@@ -1,5 +1,18 @@
-
 <%-include("partials/header-account-components") %>
 <h1 class="user-my-blog-header">Work History</h1>
-
+<div class="history-outer-block">
+  <% historyData.forEach((history)=>{ %>
+  <div class="history-sub-block">
+    <h2><%= history.blogName %></h2>
+    <div class="history-actions-block">
+      <% history.actions.forEach((action)=>{ %>
+      <p><%= action.actionType %></p>
+      <p><%= action.dateOfAction %></p>
+      <p><%= action.actionDescription %></p>
+      <hr />
+      <% }) %>
+    </div>
+  </div>
+  <% }) %>
+</div>
 <%-include("partials/footer") %>

@@ -20,7 +20,7 @@ router.post("/login", async (req, res) => {
         if (result) {
           if (result.password === password) {
             req.session.admin = result;
-            res.redirect("/admin-portal");
+            res.redirect("/admin-portal/dashboard");
           } else {
             res.send({ data: "Invalid Password" });
           }

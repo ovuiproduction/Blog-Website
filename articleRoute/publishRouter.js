@@ -57,7 +57,7 @@ router.get("/view-request/:id", async (req, res) => {
     const article = userDoc.article.id(request.blogId);
     const paragraphs = article.content.split("<br>");
     res
-      .status(400)
+      .status(200)
       .render("approveRequest", {
         article: article,
         formattedBlogContent: paragraphs,
@@ -103,7 +103,7 @@ router.get("/approve-request/:reqId/:blogId", async (req, res) => {
     const publicBlog = new Article({title:article.title,content:article.content,description:article.description});
     await publicBlog.save();
 
-    res.status(400).redirect("/admin-portal");
+    res.status(400).redirect("/admin-portal/dashboard");
   } catch (err) {
     console.log(err);
     res.status(400).send(err);

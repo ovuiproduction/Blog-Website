@@ -233,3 +233,17 @@ h3{
 .request-main-block{
   margin-bottom:5vh;
 }
+
+.history-sub-block{
+  box-shadow:0px 0px 2px gainsboro;
+  border-radius:2px;
+  margin-bottom:1rem;
+}
+.history-sub-block h2{
+  font-size:25px;
+  padding:1rem;
+  background-color: azure;
+}
+.history-actions-block{
+  padding:1rem;
+}

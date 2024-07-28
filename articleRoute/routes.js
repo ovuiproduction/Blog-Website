@@ -5,6 +5,64 @@ const userArticles = require("../models/userArticles");
 const RequestColl = require("../models/request");
 const HistoryColl = require("../models/history");
 
+const updateHistory = async (
+  authorId,
+  articleId,
+  blogName,
+  actionType,
+  actionDescription
+) => {
+  try {
+    let historyDoc = await HistoryColl.findOne({ authorId: authorId });
+    const date = new Date();
+    const dd = String(date.getDate()).padStart("0", 2);
+    const mm = String(date.getMonth() + 1).padStart("0", 2);
+    const yy = date.getFullYear();
+    const dateOfAction = `${dd}-${mm}-${yy}`;
+
+    let actionDetails = {
+      actionType: actionType,
+      dateOfAction: dateOfAction,
+      actionDescription: actionDescription,
+    };
+
+    if (historyDoc) {
+      let articleHistory = historyDoc.historyData.find(
+        (history) => history.blogId === articleId
+      );
+
+      if (articleHistory) {
+        articleHistory.actions.push(actionDetails);
+      } else {
+        historyDoc.historyData.push({
+          blogId: articleId,
+          blogName:blogName,
+          actions: [actionDetails],
+        });
+      }
+
+      await historyDoc.save();
+    } else {
+      let newHistoryDoc = new HistoryColl({
+        authorId: authorId,
+        historyData: [
+          {
+            blogId: articleId,
+            blogName:blogName,
+            actions: [actionDetails],
+          },
+        ],
+      });
+
+      await newHistoryDoc.save();
+    }
+  } catch (err) {
+    console.log("Update history error: " + err);
+  }
+};
+
+
+
 router.get("/new", (req, res) => {
   try {
     const article = new userArticles();
@@ -42,9 +100,12 @@ router.post("/new", async (req, res) => {
         article: [article],
       });
     }
-
-    await blog.save();
+    const newArticle = blog.article[blog.article.length - 1];
+   
+    await blog.save() && updateHistory(user.username,newArticle._id,title,"Create","Article Initialized");
+      
     res.redirect("/my-account/dashboard");
+
   } catch (err) {
     console.log(err);
     res.status(500).send("Internal Server Error");
@@ -53,6 +114,8 @@ router.post("/new", async (req, res) => {
 
 router.post("/drop/:id", async (req, res) => {
   try {
+    const user = req.session.user;
+
     const articleId = req.params.id;
     let userDocument = await userArticles.findOne({ "article._id": articleId });
 
@@ -65,8 +128,8 @@ router.post("/drop/:id", async (req, res) => {
     );
 
     let article = userDocument.article.find(
-        (article) => article._id.toString() === articleId
-      );
+      (article) => article._id.toString() === articleId
+    );
 
     if (articleIndex === -1) {
       return res.status(404).send("Article not found");
@@ -76,29 +139,25 @@ router.post("/drop/:id", async (req, res) => {
     userDocument.article.splice(articleIndex, 1);
 
     // Save the updated document
-    await userDocument.save();
+    await userDocument.save() && updateHistory(user.username,articleId,article.title,"Delete","Article Deleted");
 
-    if(article.status == "Private")
-    {
     let requestDocument = await RequestColl.findOne({
       "requestData.blogId": articleId,
     });
-
-    if (!requestDocument) {
-      return res.status(404).send("Article not found");
+    articleIndex = -1;
+    if(requestDocument){
+      articleIndex = requestDocument.requestData.findIndex(
+        (article) => article.blogId.toString() === articleId
+      );  
     }
+    
+    if (requestDocument && articleIndex != -1 && article.status == "Private") {
+      if (!requestDocument) {
+        return res.status(404).send("Article not found");
+      }
+      requestDocument.requestData.splice(articleIndex, 1);
 
-    articleIndex = requestDocument.requestData.findIndex(
-      (article) => article.blogId.toString() === articleId
-    );
-
-    if (articleIndex === -1) {
-      return res.status(404).send("Article not found");
-    }
-
-    requestDocument.requestData.splice(articleIndex, 1);
-    await requestDocument.save();
-
+      await requestDocument.save();
     }
     res.redirect("/my-account/dashboard");
   } catch (err) {
@@ -160,7 +219,7 @@ router.post("/edit/:id", async (req, res) => {
   try {
     const articleId = req.params.id;
     const { title, description, content } = req.body;
-
+    const user = req.session.user;
     let userDocument = await userArticles.findOne({ "article._id": articleId });
 
     if (!userDocument) {
@@ -177,7 +236,7 @@ router.post("/edit/:id", async (req, res) => {
     article.description = description;
     article.content = content.replace(/\n/g, "<br>");
 
-    await userDocument.save();
+    await userDocument.save() && updateHistory(user.username,articleId,title,"Edit","Article Edited");
 
     res.redirect("/my-account/dashboard");
   } catch (err) {

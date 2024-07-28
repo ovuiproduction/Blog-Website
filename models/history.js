@@ -6,14 +6,14 @@ const actionSchema = new mongoose.Schema({
         required: true
     },
     dateOfAction: {
-        type: Date,
+        type: String,
         required: true
     },
     actionDescription: {
         type: String,
         required: true
     }
-});
+}, { _id: false });
 
 
 const articleHistorySchema = new mongoose.Schema({
@@ -21,8 +21,12 @@ const articleHistorySchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    blogName:{
+        type:String,
+        required:true
+    },
     actions: [actionSchema]
-});
+}, { _id: false });
 
 const historySchema = new mongoose.Schema({
     authorId: {

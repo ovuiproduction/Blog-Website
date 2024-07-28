@@ -37,9 +37,27 @@ router.get('/published-articles', async (req, res) => {
     }
 });
 
+router.get('/public-article/read/:id',async(req,res)=>{
+    try {
+        const articleId = req.params.id;
+        const articleDoc  = await userArticles.findOne({'article._id':articleId});
+        let article = articleDoc.article.id(articleId);
+        if (!article) {
+          return res.status(404).send("Article not found");
+        }
+        const paragraphs = article.content.split("<br>");
+        res.render("readPublished", { article: article, formattedBlogContent: paragraphs });
+      } catch (err) {
+        console.log(err);
+        res.status(500).send("Internal Server Error");
+      }
+});
+
 router.get('/history',async(req,res)=>{
     try{
-        res.status(200).render("myHistory");
+        const user = req.session.user;
+        const historyDoc = await HistoryColl.find({authorId:user.username});
+        res.status(200).render("myHistory",{historyData:historyDoc[0].historyData});
     }catch(err){
         res.status(400).send("Internal Server Error");
     }

@@ -9,6 +9,7 @@ const articleRouter = require('./articleRoute/routes');
 const publishRouter = require('./articleRoute/publishRouter');
 const publicArticleRouter = require('./publicArticleRoutes/publicArticleRouter');
 const myAccountRouter = require('./myAccountRoute/myAccountRouter');
+const adminRouter = require('./adminRoutes/adminRoute');
 
 const RequestColl = require("./models/request");
 const Article = require('./models/article');
@@ -47,11 +48,10 @@ app.get('/',async (req,res)=>{
 
 app.get('/home',async (req,res)=>{
     try{
-        const user = req.session.user;
         const articles = await Article.find().sort({createdAt:1}).lean();
         res.render('home',{articles:articles});
     }catch(err){
-        console.log(err);
+        console.log("Internal Server Error");
     }
 });
 
@@ -77,15 +77,8 @@ app.use('/auth',authRouter);
 app.use('/publish',publishRouter);
 app.use('/public-article',publicArticleRouter);
 app.use('/my-account',myAccountRouter);
+app.use('/admin-portal',adminRouter);
 
-app.get('/admin-portal',async(req,res)=>{
-    try{
-        const requests = await RequestColl.find({});
-        res.status(200).render('adminPortal',{requests:requests});
-    }catch(err){
-        res.status(400).send(err);
-    }
-});
 
 app.listen(port,(req,res)=>{
     console.log(`server live on port ${port}`);
