@@ -26,6 +26,14 @@ app.use(session({
     cookie: { secure: false }
 }));
 
+// app.use((req, res, next) => {
+//     res.locals.successMessage = req.session.successMessage || null;
+//     res.locals.failureMessage = req.session.failureMessage || null;
+//     delete req.session.successMessage;
+//     delete req.session.failureMessage;
+//     next();
+// });
+
 mongoose.connect(database_url, {
     ssl: true
   })

@@ -247,3 +247,14 @@ h3{
 .history-actions-block{
   padding:1rem;
 }
+
+.alert{
+  position: relative;
+  display: flex;
+}
+.clear-form{
+  width:max-content;
+  margin-top:0px;
+  position:absolute;
+  right:2rem;
+}

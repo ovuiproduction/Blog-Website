@@ -1,5 +1,22 @@
-
-<%-include("partials/myAccountHeader") %>
+<%-include("partials/myAccountHeader") %> <% if (successMessage) { %>
+<div class="alert alert-success" role="alert">
+  <%= successMessage %>
+  <form class="clear-form" action="/my-account/clear" method="get">
+    <button id="close-btn" type="submit" class="close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </form>
+</div>
+<% } else if (failureMessage) { %>
+<div class="alert alert-danger" role="alert">
+  <%= failureMessage %>
+  <form class="clear-form" action="/my-account/clear" method="get">
+    <button id="close-btn" type="submit" class="close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </form>
+</div>
+<% } %>
 <h1 class="user-name-text">Welcome <%= user.name %></h1>
 <h2 class="user-my-blog-header">My Blogs</h2>
 <a class="new-blog-text" href="/article/new">New</a>
@@ -23,34 +40,35 @@
       </div>
       <div class="controlbtn">
         <div>
-        <form
-          id="deleteForm-<%= article._id %>"
-          action="/article/drop/<%= article._id %>"
-          method="post"
-        >
-          <button type="submit" class="btn btn-secondary delete-btn">Delete</button>
-        </form>
-      </div>
-      <div>
-        <a
-          href="/article/edit/<%= article._id %>"
-          class="btn btn-secondary btn-edit"
-          >Edit</a
-        >
-       
-      </div>
+          <form
+            id="deleteForm-<%= article._id %>"
+            action="/article/request-drop/<%= article._id %>"
+            method="get"
+          >
+            <button type="submit" class="btn btn-secondary delete-btn">
+              Delete
+            </button>
+          </form>
+        </div>
         <div>
-        <a
-          href="/publish/article/<%= article.title.replace(/\s+/g, '-') %>/<%= article._id %>"
-          class="btn btn-primary"
-          >Publish</a
-        >
-      </div>
+          <a
+            href="/article/edit/<%= article._id %>"
+            class="btn btn-secondary btn-edit"
+            >Edit</a
+          >
+        </div>
+        <div>
+          <a
+            href="/publish/article/<%= article.title.replace(/\s+/g, '-') %>/<%= article._id %>"
+            class="btn btn-primary"
+            >Publish</a
+          >
+        </div>
         <div>
           <a href="/article/read/<%= article._id %>" class="btn btn-success"
             >Read</a
           >
-      </div>
+        </div>
       </div>
     </div>
   </div>
@@ -72,42 +90,28 @@
       </thead>
       <tbody>
         <% requests.forEach((request, index) => { %>
-          <tr>
-              <th scope="row"><%= index + 1 %></th>
-              <td><%= request.blogName.replace('-',' ') %></td>
-              <td><%= request.dateOfRequest %></td>
-              <td><%= request.status %></td>
-              <td><%= request.dateOfApprove %></td>
-              <td><%= request.remark %></td>
-          </tr>
-      <% }) %>
+        <tr>
+          <th scope="row"><%= index + 1 %></th>
+          <td><%= request.blogName.replace('-',' ') %></td>
+          <td><%= request.dateOfRequest %></td>
+          <td><%= request.status %></td>
+          <td><%= request.dateOfApprove %></td>
+          <td><%= request.remark %></td>
+        </tr>
+        <% }) %>
       </tbody>
     </table>
   </div>
 </div>
-
 <%-include("partials/footer") %>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const deleteForms = document.querySelectorAll('form[id^="deleteForm-"]');
-
-    deleteForms.forEach((form) => {
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        let password = prompt("Please enter your password to confirm deletion");
-        let date = new Date();
-        let dd = String(date.getDate()).padStart(2, "0");
-        let mm = String(date.getMonth() + 1).padStart(2, "0"); // January is 0, so add 1
-        let yy = date.getFullYear();
-        let currPassword = dd + mm + yy;
-        console.log(currPassword);
-        if (password === currPassword) {
-          event.target.submit();
-        } else {
-          alert("Incorrect password. Form will not be submitted.");
-        }
-      });
-    });
-  });
+  if (document.getElementById("close-btn")) {
+    document.getElementById("close-btn").onclick = () => {
+      const alerts = document.getElementsByClassName("alert");
+      for (let i = 0; i < alerts.length; i++) {
+        alerts[i].style.display = "none";
+      }
+    };
+  }
 </script>

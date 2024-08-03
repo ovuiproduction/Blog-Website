@@ -112,7 +112,30 @@ router.post("/new", async (req, res) => {
   }
 });
 
-router.post("/drop/:id", async (req, res) => {
+router.get("/request-drop/:id",(req,res)=>{
+  const articleId = req.params.id;
+  res.render("deleteConformation",{articleId : articleId});
+});
+
+router.post("/request-drop/:id",async(req,res)=>{
+  try{
+  const user = req.session.user;
+  const articleId = req.params.id;
+  const password = req.body.password;
+  if(password == user.password){
+    req.session.successMessage = "Delete Successfully";
+    res.status(200).redirect(`/article/drop/${articleId}`);
+  }
+  else{
+    req.session.failureMessage = "Invalid Password!";
+    res.status(400).redirect("/my-account/dashboard");
+  }
+}catch(err){
+  res.status(404).send("Internal Server Error")
+}
+});
+
+router.get("/drop/:id", async (req, res) => {
   try {
     const user = req.session.user;
 

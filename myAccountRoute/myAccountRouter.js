@@ -8,6 +8,8 @@ const HistoryColl = require("../models/history");
 router.get('/dashboard',async(req,res)=>{
     try{
         const user = req.session.user;
+        const successMessage = req.session.successMessage;
+        const failureMessage = req.session.failureMessage;
         let articles = await userArticles.find({authorId:user.username}).sort({createdAt:1}).lean();
         let requests = await RequestColl.find({authorId:user.username});
         if(requests.length != 0){
@@ -16,7 +18,7 @@ router.get('/dashboard',async(req,res)=>{
         if(articles.length != 0){
             articles = articles[0].article;
         }
-        res.render("myAccount",{articles:articles,user:user,requests:requests});
+        res.render("myAccount",{articles:articles,user:user,requests:requests,successMessage:successMessage,failureMessage:failureMessage,});
     }catch(err){
         res.redirect('/');
     }
@@ -61,6 +63,17 @@ router.get('/history',async(req,res)=>{
     }catch(err){
         res.status(400).send("Internal Server Error");
     }
-})
+});
+
+router.get('/clear',(req,res)=>{
+    try{
+        delete req.session.successMessage;
+        delete req.session.failureMessage;
+        res.redirect('/my-account/dashboard');
+    }
+    catch(err){
+        res.redirect('/my-account/dashboard');
+    }
+});
 
 module.exports = router;
